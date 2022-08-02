@@ -1,0 +1,6 @@
+# Ignore PHP storm files.
+.idea
+
+/docroot/vendor/
+
+/docroot/.env

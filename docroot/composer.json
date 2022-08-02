@@ -1,0 +1,16 @@
+{
+  "type": "project",
+  "license": "proprietary",
+  "psr-4": {
+    "App\\": "src/"
+  },
+  "autoload-dev": {
+    "psr-4": {
+      "App\\Tests\\": "tests/"
+    }
+  },
+  "require": {
+    "symfony/http-foundation": "^5",
+    "vlucas/phpdotenv": "^5"
+  }
+}
