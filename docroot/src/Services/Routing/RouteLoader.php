@@ -1,0 +1,57 @@
+<?php
+namespace App\Services\Routing;
+
+use App\Controller\API\APIControllerInterface;
+
+class RouteLoader {
+    private static ?RouteLoader $instance = null;
+    protected array $routes = [];
+    protected array $controllers = [];
+
+    private final function __construct() {
+
+    }
+
+    public static function getInstance(): RouteLoader {
+        if(!self::$instance) {
+            self::$instance = new RouteLoader();
+        }
+        return self::$instance;
+    }
+
+    protected function loadRoutes() {
+        foreach ($this->controllers as $controllerClass) {
+            $this->getControllerRoutes($controllerClass);
+        }
+    }
+
+    protected function getControllerRoutes(string $controllerClass): array {
+        $reflection = new \ReflectionClass($controllerClass);
+        $attributes = $reflection->getAttributes(RouteAttribute::class);
+
+        foreach ($attributes as $attribute) {
+            $attributeInstance = $attribute->newInstance();
+            $route = [
+                'name' => $attributeInstance->getRouteName(),
+                'url' => $attributeInstance->getRoute(),
+                'controller' => $controllerClass,
+                'method' => $attribute->getTarget(),
+            ];
+
+            if (!isset($this->routes[$attributeInstance->getRouteName()])) {
+                $this->routes[$attributeInstance->getRouteName()] = $route;
+            }
+        }
+    }
+
+    public function registerController(string $controller): void {
+        if (!in_array($controller, $this->controllers)) {
+            $this->controllers[] = $controller;
+        }
+        $this->getControllerRoutes($controller);
+    }
+
+    public function getRoutes(): array {
+        return $this->routes;
+    }
+}

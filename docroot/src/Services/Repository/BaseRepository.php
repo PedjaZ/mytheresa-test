@@ -5,10 +5,10 @@ use App\Services\Database\Client\DatabaseClient;
 
 abstract class BaseRepository implements RepositoryInterface {
 
-    protected DatabaseClient $connection;
+    protected \PDO $connection;
 
     public function __construct() {
-        $this->connection = DatabaseClient::getInstance();
+        $this->connection = DatabaseClient::getInstance()->connect();
     }
 
 

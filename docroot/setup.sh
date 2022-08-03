@@ -3,4 +3,4 @@ cd /app
 
 cp .env.dist .env
 
-composer install && cd .. && supervisord && echo "DONE!"
+composer install && cd .. && supervisord
