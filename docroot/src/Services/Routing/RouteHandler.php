@@ -4,6 +4,7 @@ namespace App\Services\Routing;
 
 use App\Controller\API\APIControllerInterface;
 use Symfony\Component\HttpFoundation\Request;
+use App\Services\Routing\RouteLoader;
 
 /**
  * Class responsible for handling HTTP requests. Resolves routes for their controllers and returns the response.
@@ -31,7 +32,8 @@ class RouteHandler {
             $controller = $this->resolveRoute($path);
 
             if ($controller) {
-                return $controller['controller']->$controller['method']($request);
+                $method = $controller['method'];
+                return $controller['controller']->$method($request);
             }
             else {
                 throw new \Exception('Route not found!', 404);

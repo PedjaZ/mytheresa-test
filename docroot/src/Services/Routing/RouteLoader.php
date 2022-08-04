@@ -1,7 +1,7 @@
 <?php
 namespace App\Services\Routing;
 
-use App\Controller\API\APIControllerInterface;
+use App\Services\Routing\RouteTypes\GetRoute;
 
 class RouteLoader {
     private static ?RouteLoader $instance = null;
@@ -25,23 +25,27 @@ class RouteLoader {
         }
     }
 
-    protected function getControllerRoutes(string $controllerClass): array {
+    protected function getControllerRoutes(string $controllerClass) {
         $reflection = new \ReflectionClass($controllerClass);
-        $attributes = $reflection->getAttributes(RouteAttribute::class);
+        $methods = $reflection->getMethods();
 
-        foreach ($attributes as $attribute) {
-            $attributeInstance = $attribute->newInstance();
-            $route = [
-                'name' => $attributeInstance->getRouteName(),
-                'url' => $attributeInstance->getRoute(),
-                'controller' => $controllerClass,
-                'method' => $attribute->getTarget(),
-            ];
+        foreach ($methods as $method) {
+            $attributes = $method->getAttributes(RouteAttribute::class, \ReflectionAttribute::IS_INSTANCEOF);
+            foreach ($attributes as $attribute) {
+                $attributeInstance = $attribute->newInstance();
+                $route = [
+                    'name' => $attributeInstance->getRouteName(),
+                    'url' => $attributeInstance->getRoute(),
+                    'controller' => $controllerClass,
+                    'method' => $method->name,
+                ];
 
-            if (!isset($this->routes[$attributeInstance->getRouteName()])) {
-                $this->routes[$attributeInstance->getRouteName()] = $route;
+                if (!isset($this->routes[$attributeInstance->getRouteName()])) {
+                    $this->routes[$attributeInstance->getRouteName()] = $route;
+                }
             }
         }
+
     }
 
     public function registerController(string $controller): void {

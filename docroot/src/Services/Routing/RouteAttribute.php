@@ -1,8 +1,7 @@
 <?php
 namespace App\Services\Routing;
 
-#[\Attribute]
-class RouteAttribute {
+#[\Attribute] class RouteAttribute {
     protected string $name;
     protected string $route;
     protected string $method;

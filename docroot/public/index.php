@@ -9,23 +9,30 @@ use Symfony\Component\HttpFoundation\Response;
 use App\Services\Routing\RouteHandler;
 use Dotenv\Dotenv;
 
-Dotenv::createImmutable(__DIR__ . "../.env");
+try {
+    $env = Dotenv::createImmutable(__DIR__ . "/../");
+    $env->load();
 
-$request = Request::createFromGlobals();
+    $request = Request::createFromGlobals();
 
-$routeLoader = RouteLoader::getInstance();
-$routeLoader->registerController(ProductController::class);
+    $routeLoader = RouteLoader::getInstance();
+    $routeLoader->registerController(ProductController::class);
 
-$handler = new RouteHandler();
+    $handler = new RouteHandler();
 
-$response = $handler->handle($request);
+    $response = $handler->handle($request);
 
-if ($response instanceof \Exception) {
-    $code = $response->getCode();
-    $response = new Response($response->getMessage());
-    if ($code) {
-        $response->setStatusCode($code);
+    if ($response instanceof \Exception) {
+        echo $response->getMessage();
+        $code = $response->getCode();
+        $response = new Response($response->getMessage());
+        if ($code) {
+            $response->setStatusCode($code);
+        }
     }
-}
 
-$response->send();
+    $response->send();
+}
+catch (Throwable $exception) {
+    print $exception->getMessage();
+}

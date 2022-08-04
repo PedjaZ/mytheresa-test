@@ -3,8 +3,6 @@ namespace App\Model;
 
 class BaseModel implements ModelInterface {
 
-    protected int $id;
-
     /**
      * @throws \Exception
      */
@@ -24,12 +22,5 @@ class BaseModel implements ModelInterface {
         }
     }
 
-    public function getId(): int
-    {
-        return $this->id;
-    }
 
-    public function setId(int $id) {
-        $this->id = $id;
-    }
 }
